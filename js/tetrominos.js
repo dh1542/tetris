@@ -19,6 +19,8 @@ export function createTetromino(board, tetrominoType) {
   return false;
 }
 
+
+
 function isSpawnPositonValid(board) {
   for (let i = 0; i < 2; i++) {
     for (let j = 3; j < 6; j++) {
