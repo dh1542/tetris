@@ -9,6 +9,9 @@ export function drawBoard(board, canvas) {
       if (board[i][j] == 0) {
         ctx.fillStyle = "yellow";
         ctx.fillRect(j * 40, i * 40, 40, 40);
+      } else if (board[i][j] == 1) {
+        ctx.fillStyle = "orange";
+        ctx.fillRect(j * 40, i * 40, 40, 40);
       } else if (board[i][j] == 2) {
         ctx.fillStyle = "red";
         ctx.fillRect(j * 40, i * 40, 40, 40);
@@ -16,8 +19,3 @@ export function drawBoard(board, canvas) {
     }
   }
 }
-
-
-
-
-
