@@ -6,5 +6,11 @@ export function registerControls(eventTarget) {
     if (event.key === "ArrowRight") {
       eventTarget.dispatchEvent(new CustomEvent("moveTetrominoRight"));
     }
-  });
+    if (event.key === "ArrowUp") {
+      eventTarget.dispatchEvent(new CustomEvent("turnTetrominoRight"));
+    }
+    if (event.key === "ArrowDown") {
+      eventTarget.dispatchEvent(new CustomEvent("turnTetrominoLeft"));
+    }
+  })
 }
