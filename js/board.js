@@ -48,3 +48,55 @@ export function isBoardAdvanceable(board) {
 }
 
 
+export function registerControlFunctions(board) {
+  document.addEventListener('keydown', (board, event) => {
+    const eventType = event.type;
+
+    switch (eventType) {
+      case 'ArrowRight':
+        moveRight(board);
+      case 'ArrowLeft':
+        moveLeft(board);
+      case 'ArrowUp':
+        turnTetromino(board);
+      case 'ArrowDown':
+        moveDown(board);
+      default:
+        return;
+    }
+  })
+
+
+
+}
+
+
+/**
+ Turns the active tetromino to the right for 90 degrees **/
+function turnTetromino(board) {
+
+}
+
+
+
+/**
+ Turns the active tetromino to the left for 90 degrees **/
+function moveDown(board) { }
+
+
+
+/**
+ Moves the active tetromino to the right **/
+function moveRight(board) {
+
+
+}
+
+
+
+/**
+ Moves the active tetromino to the left **/
+function moveLeft(board) {
+
+
+}
