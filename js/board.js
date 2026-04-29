@@ -27,9 +27,6 @@ export function advanceBoard(board) {
   }
 }
 
-
-
-
 /** Decides if a tetromino is able to fall down one row */
 export function isBoardAdvanceable(board) {
   for (let i = 0; i < board.length; i++) {
@@ -47,56 +44,47 @@ export function isBoardAdvanceable(board) {
   return true;
 }
 
-
 export function registerControlFunctions(board) {
-  document.addEventListener('keydown', (board, event) => {
-    const eventType = event.type;
-
+  document.addEventListener("keydown", (event) => {
+    console.log(event);
+    const eventType = event.key;
     switch (eventType) {
-      case 'ArrowRight':
+      case "ArrowRight":
         moveRight(board);
-      case 'ArrowLeft':
+        break;
+      case "ArrowLeft":
         moveLeft(board);
-      case 'ArrowUp':
+        break;
+      case "ArrowUp":
         turnTetromino(board);
-      case 'ArrowDown':
+        break;
+      case "ArrowDown":
         moveDown(board);
-      default:
-        return;
+        break;
     }
-  })
-
-
-
+  });
 }
-
 
 /**
  Turns the active tetromino to the right for 90 degrees **/
 function turnTetromino(board) {
-
+  console.log("turning tetromino");
 }
-
-
 
 /**
  Turns the active tetromino to the left for 90 degrees **/
-function moveDown(board) { }
-
-
+function moveDown(board) {
+  console.log("move tetromino down");
+}
 
 /**
  Moves the active tetromino to the right **/
 function moveRight(board) {
-
-
+  console.log(`move right ${board}`);
 }
-
-
 
 /**
  Moves the active tetromino to the left **/
 function moveLeft(board) {
-
-
+  console.log("move left");
 }
