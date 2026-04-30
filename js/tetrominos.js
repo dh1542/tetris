@@ -46,6 +46,15 @@ function spawnOTetromino(board) {
   }
 }
 
+export function makeCurrentTetrominoToStatic(board) {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === 2) {
+        board[i][j] = 1;
+      }
+    }
+  }
+}
 
 
 

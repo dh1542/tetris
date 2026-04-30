@@ -1,3 +1,5 @@
+import { drawBoard } from "./render.js";
+
 // grid description:
 // 0: empty
 // 1: cell is blocked
@@ -44,16 +46,16 @@ export function isBoardAdvanceable(board) {
   return true;
 }
 
-export function registerControlFunctions(board) {
+export function registerControlFunctions(board, canvas) {
   document.addEventListener("keydown", (event) => {
     console.log(event);
     const eventType = event.key;
     switch (eventType) {
       case "ArrowRight":
-        moveRight(board);
+        moveRight(board, canvas);
         break;
       case "ArrowLeft":
-        moveLeft(board);
+        moveLeft(board, canvas);
         break;
       case "ArrowUp":
         turnTetromino(board);
@@ -77,14 +79,70 @@ function moveDown(board) {
   console.log("move tetromino down");
 }
 
-/**
- Moves the active tetromino to the right **/
-function moveRight(board) {
-  console.log(`move right ${board}`);
+function moveRight(board, canvas) {
+  if (!isTetrominoRightMovable(board)) {
+    return;
+  }
+
+  for (let i = 0; i < board.length; i++) {
+    for (let j = board[i].length - 1; j >= 0; j--) {
+      if (board[i][j] === 2) {
+        board[i][j + 1] = 2;
+        board[i][j] = 0;
+      }
+    }
+  }
+
+  drawBoard(board, canvas);
 }
 
 /**
  Moves the active tetromino to the left **/
-function moveLeft(board) {
-  console.log("move left");
+function moveLeft(board, canvas) {
+  if (!isTetrominoLeftMovable(board)) {
+    return;
+  }
+
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (board[i][j] === 2) {
+        board[i][j - 1] = 2;
+        board[i][j] = 0;
+      }
+    }
+  }
+
+  drawBoard(board, canvas);
 }
+
+function isTetrominoRightMovable(board) {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (isCurrentTetromine(board[i][j]) && j + 1 >= board[i].length) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+function isTetrominoLeftMovable(board) {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      if (isCurrentTetromine(board[i][j]) && j - 1 < 0) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+function isCurrentTetromine(boardIdentifier) {
+  if (boardIdentifier == 2) {
+    return true;
+  }
+  return false;
+}
+

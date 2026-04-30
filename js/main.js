@@ -7,7 +7,7 @@ import { runGame } from "./game.js";
 const canvas = document.getElementById("canvas");
 
 const board = createBoard(20, 10);
-registerControlFunctions(board);
+registerControlFunctions(board, canvas);
 
 createTetromino(board, "I");
 runGame(board, canvas);
