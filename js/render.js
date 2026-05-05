@@ -43,3 +43,19 @@ export function drawBoard(board, canvas) {
     }
   }
 }
+
+export function drawGameOver(canvas) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "white";
+  ctx.font = "48px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 20);
+
+  ctx.font = "20px Arial";
+  ctx.fillText("Press Enter to restart", canvas.width / 2, canvas.height / 2 + 30);
+}

@@ -1,27 +1,51 @@
-import { CELL, advanceBoard, isBoardAdvanceable } from "./board.js";
-import { drawBoard } from "./render.js";
-import {
-    createRandomTetromino,
-    makeCurrentTetrominoToStatic,
-} from "./tetrominos.js";
+import {advanceBoard, CELL, createBoard, isBoardAdvanceable} from "./board.js";
+import {drawBoard, drawGameOver} from "./render.js";
+import {createRandomTetromino, makeCurrentTetrominoToStatic,} from "./tetrominos.js";
 
 export const gameState = {
     board: null,
     score: 0,
+    isGameOver: false,
+    canvas: null,
+    timeout: 1000,
+    timerId: null,
 };
 
 export function runGame(board, canvas) {
-    const currentTimeout = 1000;
-
     gameState.board = board;
+    gameState.canvas = canvas;
     gameState.score = 0;
+    gameState.isGameOver = false;
+
+    updateScoreDisplay();
 
     createRandomTetromino(gameState.board);
-    tetromineFallDown(canvas, currentTimeout);
+    drawBoard(gameState.board, gameState.canvas);
+    tetromineFallDown();
 }
 
-export function tetromineFallDown(canvas, timeout) {
-    setTimeout(() => {
+export function restartGame() {
+    if (gameState.timerId) {
+        clearTimeout(gameState.timerId);
+    }
+
+    gameState.board = createBoard(20, 10);
+    gameState.score = 0;
+    gameState.isGameOver = false;
+
+    updateScoreDisplay();
+
+    createRandomTetromino(gameState.board);
+    drawBoard(gameState.board, gameState.canvas);
+    tetromineFallDown();
+}
+
+export function tetromineFallDown() {
+    if (gameState.isGameOver) return;
+
+    gameState.timerId = setTimeout(() => {
+        if (gameState.isGameOver) return;
+
         let nextBoard;
 
         if (isBoardAdvanceable(gameState.board)) {
@@ -35,16 +59,25 @@ export function tetromineFallDown(canvas, timeout) {
             nextBoard = result.board;
             gameState.score += result.points;
 
-            document.getElementById("score").textContent = gameState.score;
+            updateScoreDisplay();
 
-            createRandomTetromino(nextBoard);
+            const wasCreated = createRandomTetromino(nextBoard);
+
+            if (!wasCreated) {
+                gameState.isGameOver = true;
+                gameState.board = nextBoard;
+
+                drawBoard(gameState.board, gameState.canvas);
+                drawGameOver(gameState.canvas);
+                return;
+            }
         }
 
         gameState.board = nextBoard;
 
-        drawBoard(gameState.board, canvas);
-        tetromineFallDown(canvas, timeout);
-    }, timeout);
+        drawBoard(gameState.board, gameState.canvas);
+        tetromineFallDown();
+    }, gameState.timeout);
 }
 
 export function collectPointsAndDeleteFullLines(board) {
@@ -79,5 +112,13 @@ function calculatePoints(deletedLines) {
             return 800;
         default:
             return 0;
+    }
+}
+
+function updateScoreDisplay() {
+    const scoreElement = document.getElementById("score");
+
+    if (scoreElement) {
+        scoreElement.textContent = gameState.score;
     }
 }

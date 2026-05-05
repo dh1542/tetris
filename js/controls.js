@@ -1,9 +1,16 @@
-import { drawBoard } from "./render.js";
-import { gameState } from "./game.js";
-import { CELL, isCurrentTetromine } from "./board.js";
+import {drawBoard} from "./render.js";
+import {gameState, restartGame} from "./game.js";
+import {CELL, isCurrentTetromine} from "./board.js";
 
 export function registerControlFunctions(canvas) {
     document.addEventListener("keydown", (event) => {
+        if (gameState.isGameOver) {
+            if (event.key === "Enter") {
+                restartGame();
+            }
+            return;
+        }
+
         switch (event.key) {
             case "ArrowRight":
                 moveRight(gameState.board, canvas);
@@ -27,7 +34,7 @@ function turnTetromino(board, canvas) {
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (isCurrentTetromine(board[i][j])) {
-                active.push({ i, j, value: board[i][j] });
+                active.push({i, j, value: board[i][j]});
             }
         }
     }
@@ -42,7 +49,7 @@ function turnTetromino(board, canvas) {
     const centerI = (minI + maxI) / 2;
     const centerJ = (minJ + maxJ) / 2;
 
-    const rotated = active.map(({ i, j, value }) => {
+    const rotated = active.map(({i, j, value}) => {
         const relI = i - centerI;
         const relJ = j - centerJ;
 
@@ -53,7 +60,7 @@ function turnTetromino(board, canvas) {
         };
     });
 
-    for (const { i, j } of rotated) {
+    for (const {i, j} of rotated) {
         if (i < 0 || i >= board.length || j < 0 || j >= board[0].length) {
             return;
         }
@@ -65,11 +72,11 @@ function turnTetromino(board, canvas) {
 
     const next = board.map(row => row.slice());
 
-    for (const { i, j } of active) {
+    for (const {i, j} of active) {
         next[i][j] = CELL.EMPTY;
     }
 
-    for (const { i, j, value } of rotated) {
+    for (const {i, j, value} of rotated) {
         next[i][j] = value;
     }
 
@@ -199,3 +206,4 @@ function copyBoard(source, target) {
         target[i] = source[i];
     }
 }
+

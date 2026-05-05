@@ -1,4 +1,4 @@
-import { CELL, isCurrentTetromine } from "./board.js";
+import {CELL, isCurrentTetromine} from "./board.js";
 
 const TETROMINO_TYPES = ["O", "T", "S", "Z", "J", "L", "I"];
 
@@ -42,19 +42,13 @@ export function createRandomTetromino(board) {
 }
 
 function canPlaceCells(board, cells) {
-    return cells.every(({ i, j }) => {
-        return (
-            i >= 0 &&
-            i < board.length &&
-            j >= 0 &&
-            j < board[0].length &&
-            board[i][j] === CELL.EMPTY
-        );
+    return cells.every(({i, j}) => {
+        return board[i][j] === CELL.EMPTY;
     });
 }
 
 function placeCells(board, cells, value) {
-    for (const { i, j } of cells) {
+    for (const {i, j} of cells) {
         board[i][j] = value;
     }
 }
@@ -67,52 +61,52 @@ function getTetrominoSpawnCells(type) {
     switch (type) {
         case "I":
             return [
-                { i: 1, j: 3 },
-                { i: 1, j: 4 },
-                { i: 1, j: 5 },
-                { i: 1, j: 6 },
+                {i: 1, j: 3},
+                {i: 1, j: 4},
+                {i: 1, j: 5},
+                {i: 1, j: 6},
             ];
         case "O":
             return [
-                { i: 0, j: 4 },
-                { i: 0, j: 5 },
-                { i: 1, j: 4 },
-                { i: 1, j: 5 },
+                {i: 0, j: 4},
+                {i: 0, j: 5},
+                {i: 1, j: 4},
+                {i: 1, j: 5},
             ];
         case "T":
             return [
-                { i: 0, j: 5 },
-                { i: 1, j: 4 },
-                { i: 1, j: 5 },
-                { i: 1, j: 6 },
+                {i: 0, j: 5},
+                {i: 1, j: 4},
+                {i: 1, j: 5},
+                {i: 1, j: 6},
             ];
         case "S":
             return [
-                { i: 0, j: 5 },
-                { i: 0, j: 6 },
-                { i: 1, j: 4 },
-                { i: 1, j: 5 },
+                {i: 0, j: 5},
+                {i: 0, j: 6},
+                {i: 1, j: 4},
+                {i: 1, j: 5},
             ];
         case "Z":
             return [
-                { i: 0, j: 4 },
-                { i: 0, j: 5 },
-                { i: 1, j: 5 },
-                { i: 1, j: 6 },
+                {i: 0, j: 4},
+                {i: 0, j: 5},
+                {i: 1, j: 5},
+                {i: 1, j: 6},
             ];
         case "J":
             return [
-                { i: 0, j: 4 },
-                { i: 1, j: 4 },
-                { i: 1, j: 5 },
-                { i: 1, j: 6 },
+                {i: 0, j: 4},
+                {i: 1, j: 4},
+                {i: 1, j: 5},
+                {i: 1, j: 6},
             ];
         case "L":
             return [
-                { i: 0, j: 6 },
-                { i: 1, j: 4 },
-                { i: 1, j: 5 },
-                { i: 1, j: 6 },
+                {i: 0, j: 6},
+                {i: 1, j: 4},
+                {i: 1, j: 5},
+                {i: 1, j: 6},
             ];
         default:
             return [];
@@ -146,6 +140,7 @@ function spawnJTetromino(board) {
 function spawnLTetromino(board) {
     placeCells(board, getTetrominoSpawnCells("L"), CELL.L);
 }
+
 
 export function makeCurrentTetrominoToStatic(board) {
     for (let i = 0; i < board.length; i++) {
