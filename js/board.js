@@ -1,4 +1,5 @@
 import { drawBoard } from "./render.js";
+import { gameState } from "./game.js";
 
 // grid description:
 // 0: empty
@@ -10,39 +11,44 @@ export function createBoard(rows, columns) {
 }
 
 export function advanceBoard(board) {
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] == 2) {
-        board[i + 1][j] = 3;
-        board[i][j] = 0;
+  const rows = board.length;
+  const cols = board[0].length;
+
+  const next = board.map(row => row.slice());
+
+  for (let i = rows - 1; i >= 0; i--) {
+    for (let j = 0; j < cols; j++) {
+      if (board[i][j] === 2) {
+        next[i][j] = 0;
+        next[i + 1][j] = 2;
       }
     }
   }
 
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] == 3) {
-        board[i + 1][j] = 2;
-        board[i][j] = 0;
-      }
-    }
-  }
+  return next;
 }
 
 /** Decides if a tetromino is able to fall down one row */
 export function isBoardAdvanceable(board) {
-  for (let i = 0; i < board.length; i++) {
-    for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] == 2 && i != board.length - 1) {
-        if (board[i + 1][j] == 1) {
+  const rows = board.length;
+  const cols = board[0].length;
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      if (board[i][j] === 2) {
+        const nextI = i + 1;
+
+        if (nextI >= rows) {
+          return false;
+        }
+
+        if (board[nextI][j] !== 0 && board[nextI][j] !== 2) {
           return false;
         }
       }
-      if (board[i][j] == 2 && i == board.length - 1) {
-        return false;
-      }
     }
   }
+
   return true;
 }
 
@@ -52,16 +58,16 @@ export function registerControlFunctions(board, canvas) {
     const eventType = event.key;
     switch (eventType) {
       case "ArrowRight":
-        moveRight(board, canvas);
+        moveRight(gameState.board, canvas);
         break;
       case "ArrowLeft":
-        moveLeft(board, canvas);
+        moveLeft(gameState.board, canvas);
         break;
       case "ArrowUp":
-        turnTetromino(board);
+        turnTetromino(gameState.board);
         break;
       case "ArrowDown":
-        moveDown(board);
+        moveDown(gameState.board);
         break;
     }
   });
@@ -79,47 +85,75 @@ function moveDown(board) {
   console.log("move tetromino down");
 }
 
+/**
+ * Moves the active tetromino to the right
+ */
 function moveRight(board, canvas) {
   if (!isTetrominoRightMovable(board)) {
     return;
   }
 
+  const next = board.map(row => row.slice());
+
   for (let i = 0; i < board.length; i++) {
     for (let j = board[i].length - 1; j >= 0; j--) {
-      if (board[i][j] === 2) {
-        board[i][j + 1] = 2;
-        board[i][j] = 0;
+      if (isCurrentTetromine(board[i][j])) {
+        next[i][j] = 0;
+        next[i][j + 1] = 2;
       }
     }
+  }
+
+  for (let i = 0; i < board.length; i++) {
+    board[i] = next[i];
   }
 
   drawBoard(board, canvas);
 }
 
+
 /**
- Moves the active tetromino to the left **/
+ * Moves the active tetromino to the left
+ */
 function moveLeft(board, canvas) {
   if (!isTetrominoLeftMovable(board)) {
     return;
   }
 
+  const next = board.map(row => row.slice());
+
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (board[i][j] === 2) {
-        board[i][j - 1] = 2;
-        board[i][j] = 0;
+      if (isCurrentTetromine(board[i][j])) {
+        next[i][j] = 0;
+        next[i][j - 1] = 2;
       }
     }
+  }
+
+  for (let i = 0; i < board.length; i++) {
+    board[i] = next[i];
   }
 
   drawBoard(board, canvas);
 }
 
-function isTetrominoRightMovable(board) {
+function isTetrominoLeftMovable(board) {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (isCurrentTetromine(board[i][j]) && j + 1 >= board[i].length) {
-        return false;
+      if (isCurrentTetromine(board[i][j])) {
+        const nextJ = j - 1;
+
+        if (nextJ < 0) {
+          return false;
+        }
+
+        if (
+            board[i][nextJ] !== 0 &&
+            !isCurrentTetromine(board[i][nextJ])
+        ) {
+          return false;
+        }
       }
     }
   }
@@ -127,11 +161,22 @@ function isTetrominoRightMovable(board) {
   return true;
 }
 
-function isTetrominoLeftMovable(board) {
+function isTetrominoRightMovable(board) {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
-      if (isCurrentTetromine(board[i][j]) && j - 1 < 0) {
-        return false;
+      if (isCurrentTetromine(board[i][j])) {
+        const nextJ = j + 1;
+
+        if (nextJ >= board[i].length) {
+          return false;
+        }
+
+        if (
+            board[i][nextJ] !== 0 &&
+            !isCurrentTetromine(board[i][nextJ])
+        ) {
+          return false;
+        }
       }
     }
   }
@@ -140,7 +185,7 @@ function isTetrominoLeftMovable(board) {
 }
 
 function isCurrentTetromine(boardIdentifier) {
-  if (boardIdentifier == 2) {
+  if (boardIdentifier === 2) {
     return true;
   }
   return false;

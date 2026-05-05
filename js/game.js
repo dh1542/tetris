@@ -2,22 +2,32 @@ import { isBoardAdvanceable, advanceBoard } from "./board.js";
 import { drawBoard } from "./render.js";
 import { createTetromino, makeCurrentTetrominoToStatic } from "./tetrominos.js";
 
+export const gameState = {
+  board: null,
+};
+
 export function runGame(board, canvas) {
-  let currentTimeou = 1000;
-  tetromineFallDown(board, currentTimeou);
+  const currentTimeout = 1000;
+  gameState.board = board;
+  tetromineFallDown(canvas, currentTimeout);
 }
 
-export function tetromineFallDown(board, timeout) {
+export function tetromineFallDown(canvas, timeout) {
   setTimeout(() => {
-    if (isBoardAdvanceable(board)) {
-      advanceBoard(board);
-      drawBoard(board, canvas);
-      tetromineFallDown(board, timeout);
+    let nextBoard;
+
+    if (isBoardAdvanceable(gameState.board)) {
+      nextBoard = advanceBoard(gameState.board);
     } else {
-      makeCurrentTetrominoToStatic(board);
-      createTetromino(board, "O");
-      drawBoard(board, canvas);
-      tetromineFallDown(board, timeout);
+      nextBoard = gameState.board.map(row => row.slice());
+
+      makeCurrentTetrominoToStatic(nextBoard);
+      createTetromino(nextBoard, "O");
     }
+
+    gameState.board = nextBoard;
+
+    drawBoard(gameState.board, canvas);
+    tetromineFallDown(canvas, timeout);
   }, timeout);
 }
