@@ -1,109 +1,158 @@
-/**
- * Creates a Tetromino on the board and modifies the board.
- * Returns true when successful and false when not placable -> means also game over
- */
-export function createTetromino(board, tetrominoType) {
-    if (isSpawnPositonValid(board)) {
-        switch (tetrominoType) {
-            case "I":
-                spawnITetromino(board);
-                return true;
-            case "O":
-                spawnOTetromino(board);
-                return true;
-            case "T":
-                spawnTTetromino(board);
-                return true;
-            case "S":
-                spawnSTetromino(board);
-                return true;
-            case "Z":
-                spawnZTetromino(board);
-                return true;
-            case "J":
-                spawnJTetromino(board);
-                return true;
-            case "L":
-                spawnLTetromino(board);
-                return true;
-            default:
-                return true;
-        }
-    }
-    return false;
+import { CELL, isCurrentTetromine } from "./board.js";
+
+const TETROMINO_TYPES = ["O", "T", "S", "Z", "J", "L", "I"];
+
+function getRandomTetrominoType() {
+    const index = Math.floor(Math.random() * TETROMINO_TYPES.length);
+    return TETROMINO_TYPES[index];
 }
 
+export function createRandomTetromino(board) {
+    const type = getRandomTetrominoType();
 
-function isSpawnPositonValid(board) {
-    for (let i = 0; i < 2; i++) {
-        for (let j = 3; j < 6; j++) {
-            if (board[i][j] === 1) {
-                return false;
-            }
-        }
+    if (!isSpawnPositionValid(board, type)) {
+        return false;
     }
+
+    switch (type) {
+        case "I":
+            spawnITetromino(board);
+            break;
+        case "O":
+            spawnOTetromino(board);
+            break;
+        case "T":
+            spawnTTetromino(board);
+            break;
+        case "S":
+            spawnSTetromino(board);
+            break;
+        case "Z":
+            spawnZTetromino(board);
+            break;
+        case "J":
+            spawnJTetromino(board);
+            break;
+        case "L":
+            spawnLTetromino(board);
+            break;
+    }
+
     return true;
 }
 
-function spawnITetromino(board) {
-    for (let i = 3; i < 7; i++) {
-        board[1][i] = 2;
+function canPlaceCells(board, cells) {
+    return cells.every(({ i, j }) => {
+        return (
+            i >= 0 &&
+            i < board.length &&
+            j >= 0 &&
+            j < board[0].length &&
+            board[i][j] === CELL.EMPTY
+        );
+    });
+}
+
+function placeCells(board, cells, value) {
+    for (const { i, j } of cells) {
+        board[i][j] = value;
     }
+}
+
+function isSpawnPositionValid(board, type) {
+    return canPlaceCells(board, getTetrominoSpawnCells(type));
+}
+
+function getTetrominoSpawnCells(type) {
+    switch (type) {
+        case "I":
+            return [
+                { i: 1, j: 3 },
+                { i: 1, j: 4 },
+                { i: 1, j: 5 },
+                { i: 1, j: 6 },
+            ];
+        case "O":
+            return [
+                { i: 0, j: 4 },
+                { i: 0, j: 5 },
+                { i: 1, j: 4 },
+                { i: 1, j: 5 },
+            ];
+        case "T":
+            return [
+                { i: 0, j: 5 },
+                { i: 1, j: 4 },
+                { i: 1, j: 5 },
+                { i: 1, j: 6 },
+            ];
+        case "S":
+            return [
+                { i: 0, j: 5 },
+                { i: 0, j: 6 },
+                { i: 1, j: 4 },
+                { i: 1, j: 5 },
+            ];
+        case "Z":
+            return [
+                { i: 0, j: 4 },
+                { i: 0, j: 5 },
+                { i: 1, j: 5 },
+                { i: 1, j: 6 },
+            ];
+        case "J":
+            return [
+                { i: 0, j: 4 },
+                { i: 1, j: 4 },
+                { i: 1, j: 5 },
+                { i: 1, j: 6 },
+            ];
+        case "L":
+            return [
+                { i: 0, j: 6 },
+                { i: 1, j: 4 },
+                { i: 1, j: 5 },
+                { i: 1, j: 6 },
+            ];
+        default:
+            return [];
+    }
+}
+
+function spawnITetromino(board) {
+    placeCells(board, getTetrominoSpawnCells("I"), CELL.I);
 }
 
 function spawnOTetromino(board) {
-    for (let i = 0; i < 2; i++) {
-        for (let j = 4; j < 6; j++) {
-            board[i][j] = 2;
-        }
-    }
+    placeCells(board, getTetrominoSpawnCells("O"), CELL.O);
 }
 
 function spawnTTetromino(board) {
-    board[0][5] = 2;
-    board[1][4] = 2;
-    board[1][5] = 2;
-    board[1][6] = 2;
+    placeCells(board, getTetrominoSpawnCells("T"), CELL.T);
 }
 
 function spawnSTetromino(board) {
-    board[0][5] = 2;
-    board[0][6] = 2;
-    board[1][4] = 2;
-    board[1][5] = 2;
+    placeCells(board, getTetrominoSpawnCells("S"), CELL.S);
 }
 
 function spawnZTetromino(board) {
-    board[0][4] = 2;
-    board[0][5] = 2;
-    board[1][5] = 2;
-    board[1][6] = 2;
+    placeCells(board, getTetrominoSpawnCells("Z"), CELL.Z);
 }
 
 function spawnJTetromino(board) {
-    board[0][4] = 2;
-    board[1][4] = 2;
-    board[1][5] = 2;
-    board[1][6] = 2;
+    placeCells(board, getTetrominoSpawnCells("J"), CELL.J);
 }
 
 function spawnLTetromino(board) {
-    board[0][6] = 2;
-    board[1][4] = 2;
-    board[1][5] = 2;
-    board[1][6] = 2;
+    placeCells(board, getTetrominoSpawnCells("L"), CELL.L);
 }
-
 
 export function makeCurrentTetrominoToStatic(board) {
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
-            if (board[i][j] === 2) {
-                board[i][j] = 1;
+            if (isCurrentTetromine(board[i][j])) {
+                board[i][j] = -board[i][j];
             }
         }
     }
 }
-
-
-
