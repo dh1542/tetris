@@ -1,15 +1,14 @@
-import { createBoard, registerControlFunctions } from "./board.js";
-import { drawBoard } from "./render.js";
-import { createTetromino } from "./tetrominos.js";
-import { advanceBoard } from "./board.js";
-import { runGame } from "./game.js";
+import {createBoard} from "./board.js";
+import {createTetromino} from "./tetrominos.js";
+import {runGame} from "./game.js";
+import {registerControlFunctions} from "./controls.js";
 
 const canvas = document.getElementById("canvas");
 
 const board = createBoard(20, 10);
 registerControlFunctions(board, canvas);
 
-createTetromino(board, "I");
+createTetromino(board, "J");
 runGame(board, canvas);
 
 // console.log(board);

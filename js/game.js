@@ -22,7 +22,7 @@ export function tetromineFallDown(canvas, timeout) {
       nextBoard = gameState.board.map(row => row.slice());
 
       makeCurrentTetrominoToStatic(nextBoard);
-      createTetromino(nextBoard, "O");
+      createTetromino(nextBoard, "S");
     }
 
     gameState.board = nextBoard;
